@@ -14,8 +14,10 @@ impl Db {
         let conn = Connection::open(location.clone()).expect("Error opening connection");
         conn.execute("CREATE TABLE IF NOT EXISTS Reminder(
 	    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+        Title TEXT NOT NULL,
 	    Message TEXT NOT NULL,
-	    Time TEXT NOT NULL)", [])?;
+	    Time TEXT NOT NULL)", []).expect("Error creating database!");
+        println!("Tudo ok!");
         Ok(Self{conn: Mutex::new(conn)})
     }
 

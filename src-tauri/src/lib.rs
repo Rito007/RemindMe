@@ -22,8 +22,15 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![get_reminds, insert_reminds])
         .setup(|app|{
             let db = Arc::new(Db::new()?);
-            Reminder::new(&db,"Hello world", Local::now());
-            app.manage(AppData{db});
+            match Reminder::new(&db, "Hello world", Local::now(), "OlaMundo") {
+                Ok(_) => {
+                    println!("Reminder criado com sucesso.");
+                }
+                Err(e) => {
+                    println!("Erro ao criar reminder: {:?}", e);
+                }
+            }
+                    app.manage(AppData{db});
             Ok(())
         })
         .run(tauri::generate_context!())

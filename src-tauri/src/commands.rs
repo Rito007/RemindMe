@@ -5,9 +5,9 @@ use std::sync::Arc;
 use crate::db::Db;
 
 #[tauri::command]
-pub fn insert_reminds(appdata : tauri::State::<AppData>, message : String, date: DateTime<Local>) {
+pub fn insert_reminds(appdata : tauri::State::<AppData>, message : String, date: DateTime<Local>, title:String) {
     
-    Reminder::new(&appdata.db, &message, date).expect("Error creating a remind");
+    Reminder::new(&appdata.db, &message, date, &title).expect("Error creating a remind");
 }
 
 #[tauri::command]
