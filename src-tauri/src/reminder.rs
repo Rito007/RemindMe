@@ -1,32 +1,54 @@
+use std::error::Error;
 use std::ops::Rem;
 
-use chrono::{DateTime, Local, Utc};
+use chrono::{DateTime, FixedOffset, Local, Utc};
 use serde::{Serialize, Deserialize};
+use tauri::ipc::IpcResponse;
+use crate::commands::get_reminds;
 use crate::db::Db;
+use crate::AppData;
 use rusqlite::Result;
 use rusqlite::{params, Row};
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum RemindTime
+{
+    HumanReadable(String),
+    LocalTime(DateTime<chrono::Local>),
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Reminder{
     id: i32,
     message : String,
-    time: DateTime<chrono::Local>,
+    time: RemindTime,
     title: String
 
 }
+
+
 
 impl Reminder{
     pub fn new(db : &Db, message : &str, time: DateTime<chrono::Local>, title: &str) -> Result<Self>
     {
         let  id = db.execute("INSERT INTO Reminder (Message, Time, Title) Values(?, ?, ?)", params![message, time.to_rfc3339(), title])? as i32;
-
-
         Ok(Reminder {
             id,
             message: message.to_string(),
-            time,
+            time: RemindTime::LocalTime(time),
             title: title.to_string(),
         })
+    }
+    pub fn human_readable_time(time: &str)-> Result<String>
+    {
+       Ok(chrono::DateTime::parse_from_rfc3339(time).expect("Error parsing string of time.").format("%d/%m/%Y %H:%M").to_string())
+    }
+
+    pub fn get_remind_byid(id: i32, db : &Db)->Result<Reminder, rusqlite::Error>
+    {
+        let reminds = Reminder::get_reminds(&db)?;
+        reminds
+        .into_iter().find(|rem| rem.id == id).ok_or_else(||rusqlite::Error::QueryReturnedNoRows)
     }
     pub fn get_reminds(db : &Db) -> Result<Vec<Reminder>>
     {
@@ -36,15 +58,24 @@ impl Reminder{
             Ok(Reminder{
                 id:row.get::<_,i32>(0)?, 
                 message:row.get::<_,String>(2)?, 
-                time: DateTime::parse_from_rfc3339(&time_str).unwrap().with_timezone(&Local),
+                time: 
+                RemindTime::HumanReadable(Reminder::human_readable_time(&time_str)?),
                 title:row.get::<_,String>(1)?, 
             })
         })
     }
 
-    pub fn delete(&self, db: &Db)
+    pub fn delete(&self, db: &Db) -> Result<u32>
     {   
-        db.execute("DELETE FROM Reminder WHERE id=?", params![self.id]).expect("Error deleting remind");
-        println!("Remind removed successfully");
+        match db.execute("DELETE FROM Reminder WHERE id=?", params![self.id])
+        {
+            Ok(value)=>
+            {
+                println!("Remind removed successfully");
+                Ok(value as u32)
+            }
+            Err(e)=>Err(e)
+        }
+        
     }
 }
