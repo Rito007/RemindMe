@@ -12,9 +12,6 @@ struct AppData{
     db : Arc<Db>,
 }
 
-
-
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -24,10 +21,10 @@ pub fn run() {
             let db = Arc::new(Db::new()?);
             match Reminder::new(&db, "Hello world", Local::now(), "OlaMundo") {
                 Ok(_) => {
-                    println!("Reminder criado com sucesso.");
+                    println!("Reminder created sucessfully.");
                 }
                 Err(e) => {
-                    println!("Erro ao criar reminder: {:?}", e);
+                    println!("Error creating the reminder: {:?}", e);
                 }
             }
                     app.manage(AppData{db});

@@ -1,3 +1,4 @@
+import { BadgeX, Pencil } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card, CardTitle, CardAction, CardDescription, CardContent, CardHeader, CardFooter } from "../ui/card"
 import { invoke } from "@tauri-apps/api/core"
@@ -6,17 +7,14 @@ export interface RemindInfo{
     title: string,
     message: string,
     time: {HumanReadable: string}
+    onDelete: (id: number) => void;
+
 }
 
-type responseStatus = {
-    Ok :boolean;
-    ErrorMessage: string;
-}
-
-export function RemindCard({title, time, message, id}: RemindInfo)
+export function RemindCard({title, time, message, id, onDelete}: RemindInfo)
 {
     return(
-        <Card className="w-[300px]">
+        <Card className="w-full">
             <CardHeader>
                 <CardTitle>{title}</CardTitle>
                 <CardDescription>{time.HumanReadable}</CardDescription>
@@ -26,15 +24,17 @@ export function RemindCard({title, time, message, id}: RemindInfo)
                 </CardContent>
                 <CardFooter className="inline-flex justify-evenly">
                 <CardAction>    
-                    <Button variant="default" className="mx-0.5">Edit</Button> 
+                    <Pencil  className=" cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"></Pencil>
                 </CardAction>
                 <CardAction>
-                    <Button onClick={()=>{
+                    <BadgeX className="text-destructive cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110" onClick={()=>{
+                        console.log(id)
                         invoke('delete_remind', {id}).then((res)=>
                         {
-
+                              console.log(res)
+                            if(res == id) onDelete(id);
                         })
-                    }} variant="destructive" className="mx-0.5">Delete</Button>
+                    }}></BadgeX>
                 </CardAction>
                 </CardFooter>
                 

@@ -29,6 +29,7 @@ pub struct Reminder{
 
 
 impl Reminder{
+
     pub fn new(db : &Db, message : &str, time: DateTime<chrono::Local>, title: &str) -> Result<Self>
     {
         let  id = db.execute("INSERT INTO Reminder (Message, Time, Title) Values(?, ?, ?)", params![message, time.to_rfc3339(), title])? as i32;
@@ -42,6 +43,10 @@ impl Reminder{
     pub fn human_readable_time(time: &str)-> Result<String>
     {
        Ok(chrono::DateTime::parse_from_rfc3339(time).expect("Error parsing string of time.").format("%d/%m/%Y %H:%M").to_string())
+    }
+    pub fn get_id(&self)->Result<i32>
+    {
+        Ok(self.id)
     }
 
     pub fn get_remind_byid(id: i32, db : &Db)->Result<Reminder, rusqlite::Error>
@@ -71,8 +76,8 @@ impl Reminder{
         {
             Ok(value)=>
             {
-                println!("Remind removed successfully");
-                Ok(value as u32)
+                println!("Remind removed successfully value: {}", self.id);
+                Ok(self.id as u32)
             }
             Err(e)=>Err(e)
         }
