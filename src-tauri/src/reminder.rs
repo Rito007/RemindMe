@@ -40,6 +40,12 @@ impl Reminder{
             title: title.to_string(),
         })
     }
+
+    pub fn update(db : &Db, message : &str, time: DateTime<chrono::Local>, title: &str, id: i32) -> Result<i32>
+    {
+        let  alter_lines = db.execute("UPDATE Reminder SET Message=?, Time=?, Title=? where Id=?", params![message, time.to_rfc3339(), title, id])? as i32;
+        Ok((alter_lines))
+    }   
     pub fn human_readable_time(time: &str)-> Result<String>
     {
        Ok(chrono::DateTime::parse_from_rfc3339(time).expect("Error parsing string of time.").format("%d/%m/%Y %H:%M").to_string())
@@ -83,4 +89,6 @@ impl Reminder{
         }
         
     }
+
+    
 }

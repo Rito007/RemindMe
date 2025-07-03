@@ -12,19 +12,42 @@ pub fn insert_reminds(appdata : tauri::State::<AppData>, message : String, date:
             Local
                 .from_local_datetime(
                     &NaiveDateTime::parse_from_str(&date, "%d/%m/%Y %H:%M")
-                        .map_err(|e| format!("Erro ao analisar data: {}", e))?,
+                        .map_err(|e| format!("Error analysing date: {}", e))?,
                 )
                 .single()
-                .ok_or("Data inválida")?,
+                .ok_or("Invalid Date")?,
             &title,
         )
-        .expect("Erro ao criar lembrete")
+        .expect("Error creating reminder")
         .get_id()
         {
             Ok(value) => Ok(value),
             Err(_) => Err("Erro ao obter ID".to_string()),
         }
 }
+
+
+#[tauri::command]
+pub fn update_reminds(appdata : tauri::State::<AppData>, message : String, date: String, title:String, id: i32) -> Result<i32, String> {
+    
+    match Reminder::update(
+    &appdata.db,
+    &message,
+    Local
+        .from_local_datetime(
+            &NaiveDateTime::parse_from_str(&date, "%d/%m/%Y %H:%M")
+                .map_err(|e| format!("Error analysing date: {}", e))?,
+        )
+        .single()
+        .ok_or("Invalid Date")?,
+    &title,
+    id,
+){
+    Ok(value)=>Ok(value),
+    Err(e)=>Err(format!("Error updating: {}", e).to_string()),
+}
+}
+
 
 #[tauri::command]
 pub fn get_reminds(appdata : tauri::State::<AppData>)->Vec<Reminder> {

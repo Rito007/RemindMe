@@ -17,7 +17,7 @@ impl Db {
         Title TEXT NOT NULL,
 	    Message TEXT NOT NULL,
 	    Time TEXT NOT NULL)", []).expect("Error creating database!");
-        println!("Tudo ok!");
+        println!("All ok!");
         Ok(Self{conn: Mutex::new(conn)})
     }
 

@@ -1,7 +1,7 @@
 pub mod commands;
 pub mod db;
 pub mod reminder;
-use crate::commands::{get_reminds, insert_reminds, delete_remind};
+use crate::commands::{get_reminds, insert_reminds, delete_remind, update_reminds};
 use crate::reminder::Reminder;
 use crate::db::Db;
 use std::sync::Arc;
@@ -16,18 +16,10 @@ struct AppData{
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![get_reminds, insert_reminds, delete_remind])
+        .invoke_handler(tauri::generate_handler![get_reminds, insert_reminds, delete_remind,update_reminds])
         .setup(|app|{
             let db = Arc::new(Db::new()?);
-            match Reminder::new(&db, "Hello world", Local::now(), "OlaMundo") {
-                Ok(_) => {
-                    println!("Reminder created sucessfully.");
-                }
-                Err(e) => {
-                    println!("Error creating the reminder: {:?}", e);
-                }
-            }
-                    app.manage(AppData{db});
+            app.manage(AppData{db});
             Ok(())
         })
         .run(tauri::generate_context!())
