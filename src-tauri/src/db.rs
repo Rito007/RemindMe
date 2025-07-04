@@ -1,4 +1,6 @@
 use rusqlite::{Connection, Params, Result, Row};
+use std::path::PathBuf;
+use std::env;
 use std::sync::Mutex;
 
 pub struct Db {
@@ -7,9 +9,12 @@ pub struct Db {
 
 impl Db {
     pub fn new() -> Result<Self> {
-        let mut location = std::env::home_dir().expect("Erro ao obter o diretório atual");
-        location.push("remind.db");
-        let conn = Connection::open(location.clone()).expect("Error opening connection");
+         let appdata = std::env::var("APPDATA").expect("APPDATA environment variable not set");
+        let mut path = PathBuf::from(appdata);
+        path.push("RemindMe");  // substitui pelo nome da tua app
+        std::fs::create_dir_all(&path).expect("Failed to create app directory");
+        path.push("remind.db");
+        let conn = Connection::open(path.clone()).expect("Error opening connection");
         conn.execute(
             "CREATE TABLE IF NOT EXISTS Reminder(
 	    Id INTEGER PRIMARY KEY AUTOINCREMENT,

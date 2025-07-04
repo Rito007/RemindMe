@@ -6,7 +6,7 @@ use tauri::{
 use tauri_plugin_positioner::{self, WindowExt};
 
 pub fn createTray(app: &tauri::App) {
-    TrayIconBuilder::new()
+    TrayIconBuilder::new().icon(app.default_window_icon().unwrap().clone())
         .on_tray_icon_event(|tray, event| {
             tauri_plugin_positioner::on_tray_event(tray.app_handle(), &event);
             match event {

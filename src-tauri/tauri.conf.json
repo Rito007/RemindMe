@@ -12,6 +12,7 @@
   "app": {
     "windows": [
       {
+        "visible": false,
         "label": "main",
         "title": "remindme",
         "width": 430,
@@ -19,7 +20,8 @@
         "minHeight": 350,
         "minWidth": 430,
         "alwaysOnTop": true,
-        "decorations": false
+        "decorations": false,
+        "transparent": true
 
       }
     ],
