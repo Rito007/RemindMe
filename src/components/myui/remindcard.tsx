@@ -1,5 +1,4 @@
-import { BadgeX, Pencil, Proportions } from "lucide-react"
-import { Button } from "../ui/button"
+import { BadgeX, Pencil} from "lucide-react"
 import { Card, CardTitle, CardAction, CardDescription, CardContent, CardHeader, CardFooter } from "../ui/card"
 import { invoke } from "@tauri-apps/api/core"
 import DialogRemind from "./dialogRemind"
@@ -21,13 +20,13 @@ interface remindCardProps{
     export function RemindCard({remindInfo ,onDelete, onChange}: remindCardProps)
     {
         return(
-            <Card className="w-full">
+            <Card className="w-full h-full">
                 <CardHeader>
                 <CardTitle>{remindInfo.title}</CardTitle>
                 <CardDescription>{remindInfo.time.HumanReadable}</CardDescription>
             </CardHeader>
-                <CardContent>
-                    <p>{remindInfo.message}</p>
+                <CardContent className="text-wrap">
+                    <p className="text-wrap w-full h-full break-words">{remindInfo.message}</p>
                 </CardContent>
                 <CardFooter className="inline-flex justify-evenly">
                 <CardAction>    

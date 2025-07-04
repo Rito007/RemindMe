@@ -5,6 +5,7 @@ import {RemindCard, RemindInfo} from "./components/myui/remindcard"
 import { Button } from "./components/ui/button";
 import { BadgePlus } from "lucide-react"
 import DialogRemind from "./components/myui/dialogRemind";
+import { useNextRemindTimer } from "./components/hooks/userNextRemindTimer";
 import "./App.css";
 
 
@@ -14,7 +15,7 @@ function App() {
   
   const [remindList,setRemindList] = useState<RemindInfo[]>([]);
   const [update, setUpdate] = useState<boolean>(false);
-  
+  useNextRemindTimer(remindList)
   useEffect(()=>{
     invoke<RemindInfo[]>('get_reminds').then((res :RemindInfo[])=>
     {

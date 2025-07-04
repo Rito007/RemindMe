@@ -83,7 +83,7 @@ function parseDate(dateStr: string): Date {
     else
     {
         invoke("update_reminds", { title, message, date: formattedDate, id: props.remindInfo?.id })
-        .then((success) => {
+        .then(() => {
             console.log(props.remindInfo?.id);
             props.onChange(true);
             setOpen(false);

@@ -1,4 +1,4 @@
-import { HtmlHTMLAttributes, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Label } from "./../ui/label"
 import { Popover, PopoverTrigger, PopoverContent } from "./../ui/popover"
@@ -50,7 +50,7 @@ export default function DatePicker(props: DatePickerProps) {
 
     setDateTime(updated)
     setError(!isValidDateTime(updated))
-    notifyChange(updated, !isValidDateTime(updated))
+    notifyChange(updated, isValidDateTime(updated))
   }
 
   const updateTime = (event: React.ChangeEvent<HTMLInputElement>) => {
